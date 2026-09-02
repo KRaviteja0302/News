@@ -1,0 +1,3 @@
+'use client';
+import { useRouter } from 'next/navigation'; import { useState } from 'react';
+export function LanguageSwitcher({locale}:{locale:'en'|'te'}){const router=useRouter();const [busy,setBusy]=useState(false);async function change(next:'en'|'te'){setBusy(true);await fetch(`/api/language?locale=${next}`);router.refresh();setBusy(false)}return <div className="languageSwitch" aria-label="Language selector"><button disabled={busy} className={locale==='en'?'active':''} onClick={()=>change('en')}>English</button><button disabled={busy} className={locale==='te'?'active':''} onClick={()=>change('te')}>తెలుగు</button></div>}

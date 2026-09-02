@@ -1,0 +1,2 @@
+import { db } from '@/lib/db'; import { PostForm } from '@/components/post-form'; import { notFound } from 'next/navigation';
+export default async function EditPost({params}:{params:Promise<{id:string}>}){const {id}=await params;const [post,categories]=await Promise.all([db.post.findUnique({where:{id}}),db.category.findMany({orderBy:{order:'asc'}})]);if(!post)notFound();return <><div className="adminHeader"><div><span className="kicker">Edit content</span><h1>Edit post</h1></div></div><PostForm post={post} categories={categories}/></>}
