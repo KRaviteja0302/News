@@ -4,7 +4,12 @@ const db = new PrismaClient();
 async function main() {
   const email = process.env.ADMIN_EMAIL || 'admin@healthpress.local';
   const password = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
-  await db.user.upsert({ where: { email }, update: {}, create: { name: 'Administrator', email, passwordHash: await bcrypt.hash(password, 12) } });
+  const passwordHash = await bcrypt.hash(password, 12);
+  await db.user.upsert({
+    where: { email },
+    update: { name: 'Administrator', passwordHash, role: 'ADMIN', active: true },
+    create: { name: 'Administrator', email, passwordHash, role: 'ADMIN', active: true },
+  });
   const health = await db.category.upsert({ where: { slug: 'health' }, update: {}, create: { name: 'Health', slug: 'health', description: 'Community health, wellbeing and medical awareness.', order: 1 } });
   const menuCategories = [
     {name:'Events',nameTe:'ఈవెంట్స్',slug:'events',order:1},{name:'Politics',nameTe:'రాజకీయాలు',slug:'politics',order:2},{name:'Jokes',nameTe:'జోక్స్',slug:'jokes',order:3},{name:'Health',nameTe:'ఆరోగ్యం',slug:'health',order:4},{name:'Movies',nameTe:'సినిమాలు',slug:'movies',order:5},{name:'Comedy',nameTe:'కామెడీ',slug:'comedy',order:6},{name:'Photos',nameTe:'ఫోటోలు',slug:'photos',order:7},{name:'Videos',nameTe:'వీడియోలు',slug:'videos',order:8},{name:'Literary',nameTe:'సాహిత్యం',slug:'literary',order:9}
