@@ -73,7 +73,7 @@ export default async function AdsAdmin({
   const pageHref = (target: number) => `/admin/advertisements?${new URLSearchParams({ ...(search ? { search } : {}), page: String(target) }).toString()}`;
   const message =
     approved && q.password
-      ? `Your advertisement CMS login: ${(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "")}/advertiser/login Email: ${approved.email} Password: ${q.password}`
+      ? `Your advertisement CMS login: ${(process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "")}/advertiser/login Email: ${approved.email} Password: ${q.password}`
       : "";
   return (
     <>

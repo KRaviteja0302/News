@@ -89,7 +89,7 @@ URL (`/advertiser/login`).
 
 1. Create a Resend account and verify the website's sending domain in Resend.
 2. Create a Resend API key.
-3. Add `RESEND_API_KEY`, `EMAIL_FROM` and the public `NEXT_PUBLIC_SITE_URL` to the
+3. Add `RESEND_API_KEY`, `EMAIL_FROM` and the public `SITE_URL` to the
    production server environment. `EMAIL_FROM` must use the verified domain.
 4. Restart or redeploy the website.
 

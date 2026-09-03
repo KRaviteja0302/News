@@ -20,7 +20,9 @@ export async function sendAdvertiserLoginEmail({
 }: AdvertiserLoginEmail) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const siteUrl = (
+    process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL
+  )?.replace(/\/$/, "");
 
   if (!apiKey || !from || !siteUrl) {
     return { sent: false, reason: "not-configured" } as const;
