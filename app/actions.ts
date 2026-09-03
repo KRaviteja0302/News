@@ -10,9 +10,6 @@ import {
 } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
 
 const text = (f: FormData, key: string) => String(f.get(key) || "").trim();
 async function saveImage(form: FormData, key: string) {
@@ -23,20 +20,13 @@ async function saveImage(form: FormData, key: string) {
   const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (!allowed.includes(file.type))
     throw new Error("Only JPG, PNG, WEBP or GIF images are allowed");
-  const ext = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-    "image/gif": "gif",
-  }[file.type];
-  const name = `${randomUUID()}.${ext}`;
-  const folder = path.join(process.cwd(), "public", "uploads");
-  await mkdir(folder, { recursive: true });
-  await writeFile(
-    path.join(folder, name),
-    Buffer.from(await file.arrayBuffer()),
-  );
-  return `/uploads/${name}`;
+  const image = await db.uploadedImage.create({
+    data: {
+      mimeType: file.type,
+      data: Buffer.from(await file.arrayBuffer()),
+    },
+  });
+  return `/api/images/${image.id}`;
 }
 export async function loginAction(form: FormData) {
   const email = text(form, "email").toLowerCase();

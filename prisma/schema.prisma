@@ -206,3 +206,10 @@ model SiteSetting {
   footerTextTe String?
   updatedAt DateTime @updatedAt
 }
+
+model UploadedImage {
+  id String @id @default(cuid())
+  mimeType String
+  data Bytes @db.LongBlob
+  createdAt DateTime @default(now())
+}
