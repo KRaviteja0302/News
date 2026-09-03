@@ -544,8 +544,13 @@ export async function resetAdvertiserPassword(form: FormData) {
     where: { id: user.id },
     data: { passwordHash: await bcrypt.hash(tempPassword, 12), active: true },
   });
+  const emailResult = await sendAdvertiserLoginEmail({
+    name: user.name,
+    email: user.email,
+    password: tempPassword,
+  });
   redirect(
-    `/admin/advertiser-accounts?user=${user.id}&password=${encodeURIComponent(tempPassword)}`,
+    `/admin/advertiser-accounts?user=${user.id}&password=${encodeURIComponent(tempPassword)}&emailStatus=${emailResult.sent ? "sent" : emailResult.reason}`,
   );
 }
 export async function manageAdPassword(form: FormData) {
@@ -565,8 +570,13 @@ export async function manageAdPassword(form: FormData) {
     where: { id: ad.user.id },
     data: { passwordHash: await bcrypt.hash(password, 12), active: true },
   });
+  const emailResult = await sendAdvertiserLoginEmail({
+    name: ad.advertiserName,
+    email: ad.user.email,
+    password,
+  });
   redirect(
-    `/admin/advertisements?approved=${ad.id}&password=${encodeURIComponent(password)}&reset=1`,
+    `/admin/advertisements?approved=${ad.id}&password=${encodeURIComponent(password)}&reset=1&emailStatus=${emailResult.sent ? "sent" : emailResult.reason}`,
   );
 }
 export async function deleteAdvertisement(form: FormData) {
