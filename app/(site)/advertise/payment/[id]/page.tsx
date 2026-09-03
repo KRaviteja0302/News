@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { getAdSettings } from "@/lib/ads";
 import { notFound } from "next/navigation";
 import { submitPaymentReference } from "@/app/actions";
+import { PaymentSuccessModal } from "@/components/payment-success-modal";
 export const dynamic = "force-dynamic";
 export default async function Payment({
   params,
@@ -19,6 +20,7 @@ export default async function Payment({
   if (!ad) notFound();
   return (
     <section className="paymentPage">
+      {q.submitted && <PaymentSuccessModal />}
       <div className="paymentCard">
         <span className="kicker">Advertisement payment</span>
         <h1>Pay ₹{ad.amount}</h1>
@@ -38,14 +40,7 @@ export default async function Payment({
             <strong>Owner will upload payment QR here</strong>
           </div>
         )}
-        {q.submitted ? (
-          <div className="success">
-            <strong>Payment details received.</strong>
-            <br />
-            The owner will review them. Your advertiser CMS login will normally
-            be provided within 30 minutes.
-          </div>
-        ) : (
+        {!q.submitted && (
           <form action={submitPaymentReference} className="stack">
             <input type="hidden" name="id" value={ad.id} />
             <label>
