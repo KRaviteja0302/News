@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { sendAdvertiserLoginEmail } from "@/lib/email";
 
 const text = (f: FormData, key: string) => String(f.get(key) || "").trim();
 async function saveImage(form: FormData, key: string) {
@@ -226,7 +227,12 @@ export async function approveAdvertiser(form: FormData) {
   else
     await db.user.update({
       where: { id: user.id },
-      data: { active: true, role: "ADVERTISER", phone: ad.phone },
+      data: {
+        active: true,
+        role: "ADVERTISER",
+        phone: ad.phone,
+        passwordHash: await bcrypt.hash(tempPassword, 12),
+      },
     });
   const bookingGroupId = ad.bookingGroupId || ad.id;
   const existingCreatives = await db.advertisement.findMany({
@@ -270,8 +276,13 @@ export async function approveAdvertiser(form: FormData) {
   ]);
   revalidatePath("/admin/advertisements");
   revalidatePath("/");
+  const emailResult = await sendAdvertiserLoginEmail({
+    name: ad.advertiserName,
+    email: ad.email,
+    password: tempPassword,
+  });
   redirect(
-    `/admin/advertisements?approved=${id}&password=${encodeURIComponent(tempPassword)}`,
+    `/admin/advertisements?approved=${id}&password=${encodeURIComponent(tempPassword)}&emailStatus=${emailResult.sent ? "sent" : emailResult.reason}`,
   );
 }
 export async function setAdStatus(form: FormData) {

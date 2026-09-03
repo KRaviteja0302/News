@@ -23,6 +23,7 @@ export default async function AdsAdmin({
     capacitySaved?: string;
     search?: string;
     page?: string;
+    emailStatus?: string;
   }>;
 }) {
   const q = await searchParams;
@@ -72,7 +73,7 @@ export default async function AdsAdmin({
   const pageHref = (target: number) => `/admin/advertisements?${new URLSearchParams({ ...(search ? { search } : {}), page: String(target) }).toString()}`;
   const message =
     approved && q.password
-      ? `Your advertisement CMS login: http://localhost:3000/advertiser/login Email: ${approved.email} Password: ${q.password}`
+      ? `Your advertisement CMS login: ${(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "")}/advertiser/login Email: ${approved.email} Password: ${q.password}`
       : "";
   return (
     <>
@@ -113,7 +114,11 @@ export default async function AdsAdmin({
             </a>
           </div>
           <small>
-            Copy this password now. For security it is shown only once.
+            {q.emailStatus === "sent"
+              ? "Login details were emailed automatically. This password is shown only once."
+              : q.emailStatus === "not-configured"
+                ? "Automatic email is not configured yet. Use WhatsApp or email above, then add the server email settings."
+                : "Automatic email could not be delivered. Use WhatsApp or email above and check the server email settings."}
           </small>
         </div>
       )}

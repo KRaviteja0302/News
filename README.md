@@ -81,6 +81,21 @@ The CMS accepts image URLs, which keeps deployment simple and database backups s
 4. Configure HTTPS and set `NEXT_PUBLIC_SITE_URL` to the public domain.
 5. Back up PostgreSQL regularly with your provider or `pg_dump`.
 
+## Automatic advertiser login emails
+
+When an administrator approves an advertisement payment, the website can email
+the advertiser their username, temporary password and the advertiser-only login
+URL (`/advertiser/login`).
+
+1. Create a Resend account and verify the website's sending domain in Resend.
+2. Create a Resend API key.
+3. Add `RESEND_API_KEY`, `EMAIL_FROM` and the public `NEXT_PUBLIC_SITE_URL` to the
+   production server environment. `EMAIL_FROM` must use the verified domain.
+4. Restart or redeploy the website.
+
+If email is not configured or delivery fails, approval still succeeds and the
+CMS keeps the existing WhatsApp and manual-email options available to the admin.
+
 ## Useful commands
 
 - `npm run dev` — development server
